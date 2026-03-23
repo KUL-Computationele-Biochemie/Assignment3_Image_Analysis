@@ -1,0 +1,95 @@
+name: Autograding Tests
+'on':
+  - push
+  - repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+
+      - name: Install Python 3.13
+        run: uv python install 3.13
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: "P1a: Find Spots (10 points)"
+        id: p1a
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: "P1a: Find Spots"
+          setup-command: ""
+          command: uv run pytest tests/test_1a.py -v --tb=short
+          timeout: 10
+          max-score: 10
+
+      - name: "P1b: Extract Nucleotides from Image (10 points)"
+        id: p1b
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: "P1b: Extract Nucleotides from Image"
+          setup-command: ""
+          command: uv run pytest tests/test_1b.py -v --tb=short
+          timeout: 10
+          max-score: 10
+
+      - name: "P1c: Full DNA Sequence Analysis (10 points)"
+        id: p1c
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: "P1c: Full DNA Sequence Analysis"
+          setup-command: ""
+          command: uv run pytest tests/test_1c.py -v --tb=short
+          timeout: 10
+          max-score: 10
+
+      - name: "P2a: Segment Cells (10 points)"
+        id: p2a
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: "P2a: Segment Cells"
+          setup-command: ""
+          command: uv run pytest tests/test_2a.py -v --tb=short
+          timeout: 10
+          max-score: 10
+
+      - name: "P2b: Calculate Cell Fluorescence (10 points)"
+        id: p2b
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: "P2b: Calculate Cell Fluorescence"
+          setup-command: ""
+          command: uv run pytest tests/test_2b.py -v --tb=short
+          timeout: 10
+          max-score: 10
+
+      - name: "P2c: Fluorescence Trajectory (10 points)"
+        id: p2c
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: "P2c: Fluorescence Trajectory"
+          setup-command: ""
+          command: uv run pytest tests/test_2c.py -v --tb=short
+          timeout: 10
+          max-score: 10
+
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          P1A_RESULTS: "${{steps.p1a.outputs.result}}"
+          P1B_RESULTS: "${{steps.p1b.outputs.result}}"
+          P1C_RESULTS: "${{steps.p1c.outputs.result}}"
+          P2A_RESULTS: "${{steps.p2a.outputs.result}}"
+          P2B_RESULTS: "${{steps.p2b.outputs.result}}"
+          P2C_RESULTS: "${{steps.p2c.outputs.result}}"
+        with:
+          runners: p1a,p1b,p1c,p2a,p2b,p2c
