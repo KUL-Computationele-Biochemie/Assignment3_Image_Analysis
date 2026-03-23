@@ -22,3 +22,7 @@ src/*.egg-info/
 
 # macOS
 .DS_Store
+
+# Large data files (downloaded separately via notebook)
+notebooks/public/*.tif
+notebooks/public/*.tiff
