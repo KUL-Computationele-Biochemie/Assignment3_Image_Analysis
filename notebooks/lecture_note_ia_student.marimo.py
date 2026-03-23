@@ -499,8 +499,8 @@ def _(download_btn, mo, tifffile):
     _url = "https://github.com/KUL-Computationele-Biochemie/Assignment3_Image_Analysis/releases/download/v1.0/calcium_imaging_data.tif"
     if not _tif.exists() and download_btn.value:
         _tif.parent.mkdir(parents=True, exist_ok=True)
-        mo.md("Downloading…")
-        _urllib_request.urlretrieve(_url, _tif)
+        with mo.status.spinner(title="Downloading calcium imaging data (~378 MB)…"):
+            _urllib_request.urlretrieve(_url, _tif)
     image_stack = tifffile.imread(_tif) if _tif.exists() else None
     return (image_stack,)
 
