@@ -473,10 +473,35 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    import pathlib as _pathlib
+    _tif = _pathlib.Path("notebooks/public/calcium_imaging_data.tif")
+    download_btn = mo.ui.button(label="⬇️ Download calcium imaging data (~378 MB)")
+    mo.vstack([
+        mo.callout(
+            mo.md(
+                "The imaging data is not included in the repository. "
+                f"Click the button to download it to `{_tif}`."
+            ),
+            kind="info",
+        ) if not _tif.exists() else mo.callout(mo.md("✅ Data file found."), kind="success"),
+        download_btn if not _tif.exists() else mo.md(""),
+    ])
+    return (download_btn,)
+
+
 @app.cell
-def _(tifffile):
-    path = "notebooks/public/calcium_imaging_data.tif"
-    image_stack = tifffile.imread(path)
+def _(download_btn, mo, tifffile):
+    import pathlib as _pathlib
+    import urllib.request as _urllib_request
+    _tif = _pathlib.Path("notebooks/public/calcium_imaging_data.tif")
+    _url = "https://github.com/KUL-Computationele-Biochemie/Assignment3_Image_Analysis/releases/download/v1.0/calcium_imaging_data.tif"
+    if not _tif.exists() and download_btn.value:
+        _tif.parent.mkdir(parents=True, exist_ok=True)
+        mo.md("Downloading…")
+        _urllib_request.urlretrieve(_url, _tif)
+    image_stack = tifffile.imread(_tif) if _tif.exists() else None
     return (image_stack,)
 
 
